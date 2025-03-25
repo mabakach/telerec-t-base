@@ -1,5 +1,5 @@
 [server]
-192.168.7.140
+192.168.5.31
 
 [server:vars]
 ansible_become_method=sudo
