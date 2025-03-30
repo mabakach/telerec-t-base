@@ -3,4 +3,4 @@
   roles:
     - role: autoheal
       vars:
-        service_cfg: "{{ autoheal }}"
+        srv_cfg: "{{ autoheal }}"

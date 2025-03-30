@@ -3,4 +3,4 @@
   roles:
     - role: traefik
       vars:
-        service_cfg: "{{ traefik }}"
+        srv_cfg: "{{ traefik }}"

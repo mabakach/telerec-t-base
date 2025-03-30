@@ -3,4 +3,4 @@
   roles:
     - role: watchtower
       vars:
-        service_cfg: "{{ watchtower }}"
+        srv_cfg: "{{ watchtower }}"

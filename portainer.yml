@@ -3,4 +3,4 @@
   roles:
     - role: portainer
       vars:
-        service_cfg: "{{ portainer }}"
+        srv_cfg: "{{ portainer }}"

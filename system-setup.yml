@@ -5,13 +5,13 @@
     - geerlingguy.docker
     - role: traefik
       vars:
-        service_cfg: "{{ traefik }}"
+        srv_cfg: "{{ traefik }}"
     - role: watchtower
       vars:
-        service_cfg: "{{ watchtower }}"
+        srv_cfg: "{{ watchtower }}"
     - role: autoheal
       vars:
-        service_cfg: "{{ autoheal }}"
+        srv_cfg: "{{ autoheal }}"
     - role: portainer
       vars:
-        service_cfg: "{{ portainer }}"
+        srv_cfg: "{{ portainer }}"
