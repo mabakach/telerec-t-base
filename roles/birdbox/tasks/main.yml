@@ -1,0 +1,49 @@
+- name: Ensure birdbox directory exists
+  ansible.builtin.file:
+    path: "{{ docker_dir }}/birdbox/"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: docker
+    mode: '0755'
+  tags: [ always ]
+
+- name: Copy application.properties to birdbox directory
+  ansible.builtin.copy:
+    src: files/application.properties
+    dest: "{{ docker_dir }}/birdbox/application.properties"
+    owner: "{{ ansible_user }}"
+    group: docker
+    mode: '0644'
+  tags: [ always ]
+
+- name: Copy mjpg-multiplier-server tarball to birdbox directory
+  ansible.builtin.copy:
+    src: "files/mjpg-multiplier-server-{{ srv_cfg.mjpg_multiplier_version }}.tar"
+    dest: "{{ docker_dir }}/birdbox/mjpg-multiplier-server-{{ srv_cfg.mjpg_multiplier_version }}.tar"
+    owner: "{{ ansible_user }}"
+    group: docker
+    mode: '0644'
+  tags: [ always ]
+
+- name: Load mjpg-multiplier-server image into Docker
+  community.docker.docker_image:
+    name: "mjpg-multiplier-server:{{ srv_cfg.mjpg_multiplier_version }}"
+    source: load
+    load_path: "{{ docker_dir }}/birdbox/mjpg-multiplier-server-{{ srv_cfg.mjpg_multiplier_version }}.tar"
+  tags: [ always ]
+
+- ansible.builtin.import_role:
+    name: compose_hull
+  vars:
+    service_defaults:
+      directory: "{{ docker_dir }}/birdbox"
+      name: birdbox
+      domain: "birdbox.home.mabaka.ch"
+      port: 8080
+      traefik: true
+      external: true
+      watchtower: false
+      autoheal: true
+      skip_network_definition: false
+
+  tags: [ always, started, recreated ]

@@ -1,0 +1,6 @@
+- hosts: server
+  become: true
+  roles:
+    - role: birdbox
+      vars:
+        srv_cfg: "{{ birdbox }}"

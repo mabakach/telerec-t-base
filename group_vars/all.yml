@@ -26,3 +26,9 @@ autoheal:
     enabled: false
     token: ""
     channel_id: ""
+
+birdbox:
+  name: birdbox
+  directory: "{{ docker_dir }}/birdbox"
+  domain: "birdbox.home.mabaka.ch"
+  mjpg_multiplier_version: "0.9.9"

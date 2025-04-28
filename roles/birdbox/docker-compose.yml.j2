@@ -1,0 +1,23 @@
+name: "birdbox-service"
+services:
+  mjpg-multiplier-server:
+    image: mjpg-multiplier-server
+    container_name: mjpg-multiplier-server
+    restart: unless-stopped
+    environment:
+      TZ: "{{ timezone }}"
+    ports:
+      - "8080:8080" # Map container port to host port
+    volumes:
+      - /docker/mjpg-multiplier-server/application.properties:/config/application.properties # Spring Boot config location
+    labels:
+      traefik.enable: "true"
+      traefik.docker.network: "traefik_default"
+      traefik.http.services.{{ service_cfg.name }}.loadbalancer.server.port: "{{ service_cfg.port }}"
+      traefik.http.routers.{{ service_cfg.name }}_web.EntryPoints: "web-secure"
+      traefik.http.routers.{{ service_cfg.name }}_web.rule: "Host(`{{ service_cfg.domain }}`) and PathPrefix(`/api`)"
+      traefik.http.routers.{{ service_cfg.name }}_web.service: "{{ service_cfg.name }}"
+      traefik.http.routers.{{ service_cfg.name }}_web.tls: "true"
+      traefik.http.routers.{{ service_cfg.name }}_web.tls.certresolver: "default"
+      autoheal: "true"
+    networks: *base_networks
