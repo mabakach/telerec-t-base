@@ -7,10 +7,19 @@
     mode: '0755'
   tags: [ always ]
 
-- name: Copy application.properties to birdbox directory
+- name: Ensure mjpg-multiplier-server directory exists
+  ansible.builtin.file:
+    path: "{{ docker_dir }}/birdbox/mjpg-multiplier-server"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: docker
+    mode: '0755'
+  tags: [ always ]
+
+- name: Copy mjpg-multiplier-server application.properties to birdbox directory
   ansible.builtin.copy:
-    src: files/application.properties
-    dest: "{{ docker_dir }}/birdbox/application.properties"
+    src: files/mjpg-multiplier-server/application.properties
+    dest: "{{ docker_dir }}/birdbox/mjpg-multiplier-server/application.properties"
     owner: "{{ ansible_user }}"
     group: docker
     mode: '0644'
@@ -18,7 +27,7 @@
 
 - name: Copy mjpg-multiplier-server tarball to birdbox directory
   ansible.builtin.copy:
-    src: "files/mjpg-multiplier-server-{{ srv_cfg.mjpg_multiplier_version }}.tar"
+    src: "files/mjpg-multiplier-server/mjpg-multiplier-server-{{ srv_cfg.mjpg_multiplier_version }}.tar"
     dest: "{{ docker_dir }}/birdbox/mjpg-multiplier-server-{{ srv_cfg.mjpg_multiplier_version }}.tar"
     owner: "{{ ansible_user }}"
     group: docker
@@ -31,6 +40,50 @@
     source: load
     load_path: "{{ docker_dir }}/birdbox/mjpg-multiplier-server-{{ srv_cfg.mjpg_multiplier_version }}.tar"
   tags: [ always ]
+
+- name: Ensure birdbox-website directory exists
+  ansible.builtin.file:
+    path: "{{ docker_dir }}/birdbox/birdbox-website"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: docker
+    mode: '0755'
+  tags: [ always ]
+
+- name: Ensure birdbox-website data directory exists
+  ansible.builtin.file:
+    path: "{{ docker_dir }}/birdbox/birdbox-website/data"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: docker
+    mode: '0755'
+  tags: [ always ]
+
+- name: Copy birdbox-website application.properties to birdbox directory
+  ansible.builtin.copy:
+    src: files/birdbox-website/application.properties
+    dest: "{{ docker_dir }}/birdbox/birdbox-website/application.properties"
+    owner: "{{ ansible_user }}"
+    group: docker
+    mode: '0644'
+  tags: [ always ]
+
+- name: Copy birdbox-website tarball to birdbox directory
+  ansible.builtin.copy:
+    src: "files/birdbox-website/birdbox-website-{{ srv_cfg.birdbox_website_version }}.tar"
+    dest: "{{ docker_dir }}/birdbox/birdbox-website-{{ srv_cfg.birdbox_website_version }}.tar"
+    owner: "{{ ansible_user }}"
+    group: docker
+    mode: '0644'
+  tags: [ always ]
+
+- name: Load birdbox-website image into Docker
+  community.docker.docker_image:
+    name: "birdbox-website:{{ srv_cfg.birdbox_website_version  }}"
+    source: load
+    load_path: "{{ docker_dir }}/birdbox/birdbox-website-{{ srv_cfg.birdbox_website_version  }}.tar"
+  tags: [ always ]
+
 
 - ansible.builtin.import_role:
     name: compose_hull

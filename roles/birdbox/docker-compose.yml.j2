@@ -9,15 +9,52 @@ services:
     ports:
       - "8080:8080" # Map container port to host port
     volumes:
-      - /docker/mjpg-multiplier-server/application.properties:/config/application.properties # Spring Boot config location
+      - /docker/birdbox/mjpg-multiplier-server/application.properties:/config/application.properties # Spring Boot config location
     labels:
       traefik.enable: "true"
       traefik.docker.network: "traefik_default"
       traefik.http.services.{{ service_cfg.name }}.loadbalancer.server.port: "{{ service_cfg.port }}"
       traefik.http.routers.{{ service_cfg.name }}_web.EntryPoints: "web-secure"
-      traefik.http.routers.{{ service_cfg.name }}_web.rule: "Host(`{{ service_cfg.domain }}`) and PathPrefix(`/api`)"
+      traefik.http.routers.{{ service_cfg.name }}_web.rule: "Host(`{{ service_cfg.domain }}`) && PathPrefix(`/api`)"
       traefik.http.routers.{{ service_cfg.name }}_web.service: "{{ service_cfg.name }}"
       traefik.http.routers.{{ service_cfg.name }}_web.tls: "true"
       traefik.http.routers.{{ service_cfg.name }}_web.tls.certresolver: "default"
       autoheal: "true"
+    networks: *base_networks
+
+  birdbox-website:
+    image: birdbox-website
+    container_name: birdbox-website
+    restart: unless-stopped
+    environment:
+      TZ: "{{ timezone }}"
+    ports:
+      - "8081:8080" # Map container port to host port
+    volumes:
+      - /docker/birdbox/birdbox-website/application.properties:/config/application.properties # Spring Boot config location
+    labels:
+      traefik.enable: "true"
+      traefik.docker.network: "traefik_default"
+      traefik.http.services.{{ service_cfg.name }}.loadbalancer.server.port: "{{ service_cfg.port }}"
+      traefik.http.routers.{{ service_cfg.name }}_web.EntryPoints: "web-secure"
+      traefik.http.routers.{{ service_cfg.name }}_web.rule: "Host(`{{ service_cfg.domain }}`)"
+      traefik.http.routers.{{ service_cfg.name }}_web.service: "{{ service_cfg.name }}"
+      traefik.http.routers.{{ service_cfg.name }}_web.tls: "true"
+      traefik.http.routers.{{ service_cfg.name }}_web.tls.certresolver: "default"
+      autoheal: "true"
+    networks: *base_networks
+
+  birdbox-mariadb:
+    image: mariadb:lts
+    container_name: birdbox-mariadb
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: "rootpw"
+      MYSQL_DATABASE: "birdbox"
+      MYSQL_USER: "birdbox"
+      MYSQL_PASSWORD: "birdbox"
+    ports:
+      - "3306:3306" # Map container port to host port
+    volumes:
+      - /docker/birdbox/mariadb/data:/docker/birdbox/birdbox-website/data # Persist database data
     networks: *base_networks

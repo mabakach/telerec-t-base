@@ -31,4 +31,5 @@ birdbox:
   name: birdbox
   directory: "{{ docker_dir }}/birdbox"
   domain: "birdbox.home.mabaka.ch"
-  mjpg_multiplier_version: "0.9.9"
+  mjpg_multiplier_version: "1.0.0"
+  birdbox_website_version: "0.5.0"
