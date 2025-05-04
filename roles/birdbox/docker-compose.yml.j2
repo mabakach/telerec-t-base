@@ -13,10 +13,11 @@ services:
     labels:
       traefik.enable: "true"
       traefik.docker.network: "traefik_default"
-      traefik.http.services.{{ service_cfg.name }}.loadbalancer.server.port: "{{ service_cfg.port }}"
+      traefik.http.services.{{ service_cfg.name }}_api.loadbalancer.server.port: "{{ service_cfg.port }}"
       traefik.http.routers.{{ service_cfg.name }}_api.EntryPoints: "web-secure"
       traefik.http.routers.{{ service_cfg.name }}_api.rule: "Host(`{{ service_cfg.domain }}`) && PathPrefix(`/api`)"
-      traefik.http.routers.{{ service_cfg.name }}_api.service: "{{ service_cfg.name }}"
+      traefik.http.routers.{{ service_cfg.name }}_api.priority: 100
+      traefik.http.routers.{{ service_cfg.name }}_api.service: "{{ service_cfg.name }}_api"
       traefik.http.routers.{{ service_cfg.name }}_api.tls: "true"
       traefik.http.routers.{{ service_cfg.name }}_api.tls.certresolver: "default"
       autoheal: "true"
@@ -35,10 +36,11 @@ services:
     labels:
       traefik.enable: "true"
       traefik.docker.network: "traefik_default"
-      traefik.http.services.{{ service_cfg.name }}.loadbalancer.server.port: "{{ service_cfg.port }}"
+      traefik.http.services.{{ service_cfg.name }}_web.loadbalancer.server.port: "{{ service_cfg.port }}"
       traefik.http.routers.{{ service_cfg.name }}_web.EntryPoints: "web-secure"
       traefik.http.routers.{{ service_cfg.name }}_web.rule: "Host(`{{ service_cfg.domain }}`) && !PathPrefix(`/api`)"
-      traefik.http.routers.{{ service_cfg.name }}_web.service: "{{ service_cfg.name }}"
+      traefik.http.routers.{{ service_cfg.name }}_web.priority: 50
+      traefik.http.routers.{{ service_cfg.name }}_web.service: "{{ service_cfg.name }}_web"
       traefik.http.routers.{{ service_cfg.name }}_web.tls: "true"
       traefik.http.routers.{{ service_cfg.name }}_web.tls.certresolver: "default"
       autoheal: "true"
